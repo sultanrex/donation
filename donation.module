@@ -1,6 +1,6 @@
 <?php
 
-module_load_include('inc','donation','field_type.inc');
+module_load_include('inc','donation','');
 
 /**
  * Implements hook_block_info().
