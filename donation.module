@@ -1,0 +1,228 @@
+<?php
+
+module_load_include('inc','donation','field_type.inc');
+
+/**
+ * Implements hook_block_info().
+ */
+function donation_block_info() {
+	$blocks = array();
+
+	$blocks['donation'] = array(
+		'info' => t('Donation'),
+		'cache' => DRUPAL_NO_CACHE,
+	);
+
+	return $blocks;
+}
+
+function donation_menu() {
+	$menu = array();
+	$menu['admin/content/donation_settings'] = array(
+		'title' => t('Donation Settings'),
+		'description' => t('Paypal donation settings'),
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('donation_settings_form'),
+		'access callback' => 1,
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$menu['donation_receive'] = array(
+		'title' => t('Donation'),
+		'description' => t('donation'),
+		'page callback' => 'donation_callback',
+		'access callback' => 1,
+		'type' => MENU_NORMAL_ITEM,
+	);
+	return $menu;
+}
+
+function donation_callback() {
+	dpm($_GET);
+	return "";
+}
+
+function donation_settings_form() {
+	$form = array();
+	$ar = array('business'=>'Business','personal'=>'Personal');
+
+	// $form['account_type'] = array(
+	// 	'#title' => t('Paypal Account Type'),
+	//     '#type' => 'radios', 
+	//     '#description' => t('Type Of Your Paypal Account'),
+	//     '#options' => $ar,
+	//     '#default_value' => variable_get('account_type',''), 
+	//     '#required' => TRUE, 
+	// );
+	$form['email'] = array(
+		'#type' => 'textfield',
+		'#title' => t('PayPal Email'),
+		'#required' => 1,
+		'#description' => t('Your Paypal Registered Email ID'),
+		'#size' => 60,
+		'#default_value' => variable_get('email',''),
+	);
+	$form['item_name'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Item Name'),
+		'#size' => 60,
+		'#required' => 1,
+		'#description' => t('Your Donation Name , Anything as your wish'),
+		'#default_value' => variable_get('item_name',''),
+	);
+	$form['item_number'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Item Number'),
+		'#description' => t('Your Donation Number , Anything as your wish'),
+		'#required' => 1,
+		'#size' => 60,
+		'#default_value' => variable_get('item_number',''),
+	);
+	$form['cancel_url'] = array(
+		'#type' => 'textfield',
+		'#title' => 'Cancel URL',
+		'#size' => 60,
+		'#default_value' => variable_get('cancel_url',''),
+		'#description' => t('Paypal redirect to given \'cancel URL\' when a donor cancels transaction on Paypal page'),
+	);
+	$form['return_url'] = array(
+		'#type' => 'textfield',
+		'#title' => 'return URL',
+		'#size' => 60,
+		'#default_value' => variable_get('return_url',''),
+		'#description' => t('Paypal redirect to given \'Return URL\' after  donor finished transaction on Paypal page'),
+	);
+	$form['logo_url'] = array(
+		'#type' => 'managed_file',
+		'#title' => 'Logo Image',
+		'#size' => 60,
+		'#default_value' => variable_get('logo_id',''),
+		'#description' => t(' Logo image that displays on PayPal page , Allowed extensions png, jpg, gif'),
+		'#upload_location' => 'public://donation/',
+		'#upload_validators' => array(
+			'file_validate_extensions' => array('png jpg gif') ,
+		),
+	);
+	$form[''] =array(
+		'#type' => 'submit',
+		'#value' => 'Save Configiration',
+	);
+	$form['#submit'][] = 'donation_settings_form_submit';
+	return $form;
+}
+function donation_settings_form_submit($form ,&$form_state){
+	dpm($form_state);
+	$ac_type = $form_state['values']['account_type'];
+	$email = $form_state['values']['email'];
+	$s_email = filter_var($email,FILTER_SANITIZE_EMAIL);
+	$item_name = $form_state['values']['item_name'];
+	$item_number = $form_state['values']['item_number'];
+	$cancel_url = $form_state['values']['cancel_url'];
+	$return_url = $form_state['values']['return_url'];
+	$logo_id = $form_state['values']['logo_url'];
+
+	perm_save($logo_id);
+
+	variable_set('account_type',$ac_type);
+	variable_set('email',$s_email);
+	variable_set('item_number',$item_number);
+	variable_set('item_name',$item_name);
+	variable_set('cancel_url',$cancel_url);
+	variable_set('return_url',$return_url);
+	variable_set('logo_id',$logo_id);
+}
+
+/**
+ * Implements hook_block_configure().
+ */
+function donation_block_view($delta = '') {
+	$block =array();
+	switch ($delta) {
+		
+		case 'donation':
+			$block['content'] = drupal_get_form('donation_form');
+			break;
+		
+		default:
+			# code...
+			break;
+	}
+	return $block;
+}
+
+
+function donation_form(){
+	$ar = array(1=>'1$',2=>'2$',3=>'3$');
+	$ac_type = variable_get('account_type');
+	$email = variable_get('email');
+	$item_name = variable_get('item_name');
+	$item_number = variable_get('item_number');
+	$cancel_url = variable_get('cancel_url');
+	$return_url = variable_get('return_url');
+	$logo_id = variable_get('logo_url');
+	$callback_url = variable_get('callback_url');
+
+	$form = array();
+	$form['#method'] = 'post';
+	$form['#action'] = 'https://www.paypal.com/cgi-bin/webscr';
+	$form['amount'] = array(
+		'#title' => 'Donation Amount  ( leave it black to choose different amount in paypal site )',
+	    '#type' => 'radios', 
+	    '#options' => $ar,
+	    '#default_value' => '', 
+	    '#size' => 60,
+	    '#required' => TRUE, 
+	);
+	$form['cmd'] = array(
+		'#type' => 'hidden',
+		'#value' => '_donations'
+	);	
+	$form['business'] = array(
+		'#type' => 'hidden',
+		'#value' => $email,
+	);
+
+	if(!empty($item_name)){	
+		$form['item_name'] = array(
+			'#type' => 'hidden',
+			'#value' => $item_name,
+		);
+	}
+	if(!empty($item_number)) {
+		$form['item_number'] = array(
+			'#type' => 'hidden',
+			'#value' => $item_number,
+		);
+	}
+	if(!empty($return_url)) {
+		$form['return'] = array(
+			'#type' => 'hidden',
+			'#value' => $return_url,
+		);
+	}
+	$form['notify_url'] = array(
+		'#type' => 'hidden',
+		'#value' => $GLOBALS['base_url'].'/donation_receive',
+	);
+
+	if(!empty($cancel_url)) {
+		$form['cancel_return'] = array(
+			'#type' => 'hidden',
+			'#value' => $cancel_url,
+		);
+	}
+	$form['no_note'] = array(
+		'#type' => 'hidden',
+		'#value' => '1'
+	);
+	$form['image_url'] = array(
+		'#type' => 'hidden',
+		'#value' => image_url(variable_get('logo_id')),
+	);
+	$form['actions']['submit'] = array(
+	    '#type' => 'submit',
+	    '#value' => t('Paypal Donate'),
+  	);
+
+	return $form;
+}
+

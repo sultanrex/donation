@@ -1,0 +1,138 @@
+<?php
+
+
+
+
+// function donation_enable() {
+//   foreach (_donation_installed_fields() as $field) {
+//     field_create_field($field);
+//   }
+ 
+//   foreach (_donation_installed_instances() as $instance) {
+//     field_create_instance($instance);
+//   }
+// }
+
+// function _donation_installed_fields() {
+//   $t = get_t();
+//   return array(
+//     'account_type' => array(
+//       'field_name' => 'account_type',
+//       'cardinality' => 1,
+//       'type'        => 'text',
+//     ),
+//     'email' => array(
+ 
+//       'field_name' => 'email',
+//       'cardinality' => 1,
+//       'type'        => 'text',
+//     ),
+//     'item_name' => array(
+ 
+//       'field_name' => 'item_name',
+//       'cardinality' => 1,
+//       'type'        => 'text',
+//     ),
+//     'item_number' => array(
+ 
+//       'field_name' => 'item_number',
+//       'cardinality' => 1,
+//       'type'        => 'text',
+//     ),
+//     'logo_url' => array(
+ 
+//       'field_name' => 'logo_url',
+//       'cardinality' => 1,
+//       'type'        => 'text',
+//     ),
+//     'return' => array(
+ 
+//       'field_name' => 'return',
+//       'cardinality' => 1,
+//       'type'        => 'text',
+//     ),
+//     'cancel_return' => array(
+ 
+//       'field_name' => 'cancel_return',
+//       'cardinality' => 1,
+//       'type'        => 'text',
+//     ),
+//    );
+ 
+// }
+
+// function _donation_installed_instances() {
+//   return array( 
+//    'account_type' => array(
+//       'field_name' => 'account_type',
+//       'label'       => t('Account Type.'),
+//       'bundle' => 'donation',
+//       'entity_type' => 'node',
+//       'widget'      => array(
+//         'type'    => 'text_textfield',
+//       ),
+//       'description' => 'Account Type',
+//     ), 
+//    'email' => array(
+//       'field_name' => 'email',
+//       'label'       => t('Email'),
+//       'bundle' => 'donation',
+//       'entity_type' => 'node',
+//       'widget'      => array(
+//       'type'    => 'text_textfield',
+//       ),
+//       'description' => 'Email Address Of Paypal Account',
+//     ), 
+//    'item_name' => array(
+//       'field_name' => 'item_name',
+//       'label'       => t('Item Name.'),
+//       'bundle' => 'donation',
+//       'entity_type' => 'node',
+//       'widget'      => array(
+//         'type'    => 'text_textfield',
+//       ),
+//       'description' => 'Item Name',
+//     ), 
+
+//    'item_number' => array(
+//       'field_name' => 'item_number',
+//       'label'       => t('Item Number.'),
+//       'bundle' => 'donation',
+//       'entity_type' => 'node',
+//       'widget'      => array(
+//         'type'    => 'text_textfield',
+//       ),
+//       'description' => 'Item Number',
+//     ), 
+//    'logo_url' => array(
+//       'field_name' => 'logo_url',
+//       'label'       => t('Logo URL.'),
+//       'bundle' => 'donation',
+//       'entity_type' => 'node',
+//       'widget'      => array(
+//         'type'    => 'text_textfield',
+//       ),
+//       'description' => 'Logo URL',
+//     ), 
+//    'return' => array(
+//       'field_name' => 'return',
+//       'label'       => t('Return URL.'),
+//       'bundle' => 'donation',
+//       'entity_type' => 'node',
+//       'widget'      => array(
+//         'type'    => 'text_textfield',
+//       ),
+//       'description' => 'Redirection link after donotion completes',
+//     ), 
+//    'cancel_return' => array(
+//       'field_name' => 'cancel_return',
+//       'label'       => t('Cancel URL.'),
+//       'bundle' => 'donation',
+//       'entity_type' => 'node',
+//       'widget'      => array(
+//         'type'    => 'text_textfield',
+//       ),
+//       'description' => 'Return URL when a donor cancels donation on Paypal site',
+//     ), 
+//   );
+// }
